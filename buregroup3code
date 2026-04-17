@@ -1,0 +1,461 @@
+package com.mycompany.datetime;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+public class Datetime {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        ArrayList<String> cars = new ArrayList<>();
+        ArrayList<Double> price = new ArrayList<>();
+        ArrayList<Boolean> available = new ArrayList<>();
+
+        cars.add("Toyota Vios");
+        price.add(1500.0);
+        available.add(true);
+
+        cars.add("Honda Civic");
+        price.add(1800.0);
+        available.add(true);
+
+        cars.add("Mitsubishi Mirage");
+        price.add(1500.0);
+        available.add(true);
+
+        // BOOKING RECORDS
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> contacts = new ArrayList<>();
+        ArrayList<String> rentedCars = new ArrayList<>();
+        ArrayList<Integer> daysArr = new ArrayList<>();
+        ArrayList<String> dates = new ArrayList<>();
+        ArrayList<Double> totals = new ArrayList<>();
+
+        while (true) {
+            System.out.println("\n===== MAIN MENU =====");
+            System.out.println("1. Admin");
+            System.out.println("2. Customer");
+            System.out.println("3. Exit");
+            System.out.print("Choose: ");
+
+            if (!sc.hasNextInt()) {
+                System.out.println("Invalid input.");
+                sc.next();
+                continue;
+            }
+
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            if (choice == 3) {
+                System.out.println("Thank you!");
+                break;
+            }
+
+            // ================= ADMIN =================
+            else if (choice == 1) {
+
+                while (true) {
+                    System.out.print("Enter username: ");
+                    if (sc.nextLine().equals("admin")) break;
+                    System.out.println("Invalid username.");
+                }
+
+                while (true) {
+                    System.out.print("Enter password: ");
+                    if (sc.nextLine().equals("1234")) break;
+                    System.out.println("Invalid password.");
+                }
+
+                System.out.println("Login Successful!");
+
+                boolean adminLoop = true;
+
+                while (adminLoop) {
+                    System.out.println("\n===== ADMIN MENU =====");
+                    System.out.println("1. Add New Car");
+                    System.out.println("2. Remove Car");
+                    System.out.println("3. Rental Records");
+                    System.out.println("4. View Available Cars");
+                    System.out.println("5. Back");
+                    System.out.print("Choose: ");
+
+                    int adminChoice = sc.nextInt();
+                    sc.nextLine();
+
+                    // ================= ADD CAR =================
+                    if (adminChoice == 1) {
+                        boolean validCar = false;
+                        while (!validCar) {
+
+                            System.out.print("Enter car model: ");
+                            String model = sc.nextLine();
+
+                            if (model.trim().isEmpty()) {
+                                System.out.println("Invalid car name.");
+                                continue;
+                            }
+
+                            System.out.print("Enter price per day: ");
+                            if (!sc.hasNextDouble()) {
+                                System.out.println("Invalid price.");
+                                sc.next();
+                                continue;
+                            }
+
+                            double newPrice = sc.nextDouble();
+                            sc.nextLine();
+
+                            if (newPrice < 1500) {
+                                System.out.println("Price must be at least 1500.");
+                                continue;
+                            }
+
+                            System.out.println("\nPlease confirm the data:");
+                            System.out.println("Car Model: " + model);
+                            System.out.println("Price per day: " + newPrice);
+                            System.out.print("Is this correct? (Y/N): ");
+                            String confirm = sc.nextLine().trim().toUpperCase();
+
+                            if (confirm.equals("Y")) {
+                                cars.add(model);
+                                price.add(newPrice);
+                                available.add(true);
+                                System.out.println("Car added successfully!");
+
+                                while (true) {
+                                    System.out.println("\n1. Back to Admin Menu");
+                                    System.out.println("2. Exit Program");
+                                    System.out.print("Choose: ");
+                                    if (!sc.hasNextInt()) {
+                                        System.out.println("Invalid input.");
+                                        sc.next();
+                                        continue;
+                                    }
+                                    int postChoice = sc.nextInt();
+                                    sc.nextLine();
+                                    if (postChoice == 1) break;
+                                    else if (postChoice == 2) {
+                                        System.out.println("Thank you!");
+                                        System.exit(0);
+                                    } else {
+                                        System.out.println("Invalid choice.");
+                                    }
+                                }
+
+                                validCar = true;
+
+                            } else if (confirm.equals("N")) {
+                                System.out.println("Cancelled. Returning to Admin Menu.\n");
+                                break;
+                            } else {
+                                System.out.println("Invalid input. Please enter Y or N.");
+                            }
+                        }
+                    }
+
+                    // ================= REMOVE CAR =================
+                    else if (adminChoice == 2) {
+                        if (cars.isEmpty()) {
+                            System.out.println("No cars to remove.");
+                            continue;
+                        }
+
+                        for (int i = 0; i < cars.size(); i++) {
+                            System.out.println((i + 1) + ". " + cars.get(i) + " - " + price.get(i));
+                        }
+
+                        System.out.print("Select car: ");
+                        int index = sc.nextInt() - 1;
+                        sc.nextLine();
+
+                        if (index < 0 || index >= cars.size()) {
+                            System.out.println("Invalid choice.");
+                            continue;
+                        }
+
+                        System.out.println("You selected: " + cars.get(index) + " - " + price.get(index));
+                        System.out.print("Confirm deletion? (Y/N): ");
+                        String confirm = sc.nextLine().trim().toUpperCase();
+
+                        if (confirm.equals("Y")) {
+                            cars.remove(index);
+                            price.remove(index);
+                            available.remove(index);
+                            System.out.println("Car removed successfully!");
+
+                            while (true) {
+                                System.out.println("\n1. Back to Admin Menu");
+                                System.out.println("2. Exit Program");
+                                System.out.print("Choose: ");
+                                if (!sc.hasNextInt()) {
+                                    System.out.println("Invalid input.");
+                                    sc.next();
+                                    continue;
+                                }
+                                int postChoice = sc.nextInt();
+                                sc.nextLine();
+                                if (postChoice == 1) break;
+                                else if (postChoice == 2) {
+                                    System.out.println("Thank you!");
+                                    System.exit(0);
+                                } else {
+                                    System.out.println("Invalid choice.");
+                                }
+                            }
+
+                        } else if (confirm.equals("N")) {
+                            System.out.println("Deletion cancelled. Returning to Admin Menu.\n");
+                        } else {
+                            System.out.println("Invalid input. Returning to Admin Menu.\n");
+                        }
+                    }
+
+                    // ================= RENTAL RECORDS =================
+                    else if (adminChoice == 3) {
+
+                        if (names.size() == 0) {
+                            System.out.println("No records found.");
+                        } else {
+                            for (int i = 0; i < names.size(); i++) {
+                                System.out.println("\nRecord #" + (i + 1));
+                                System.out.println("Name: " + names.get(i));
+                                System.out.println("Contact: " + contacts.get(i));
+                                System.out.println("Car: " + rentedCars.get(i));
+                                System.out.println("Days: " + daysArr.get(i));
+                                System.out.println("Date: " + dates.get(i));
+                                System.out.println("Total: " + totals.get(i));
+                            }
+                        }
+
+                        System.out.print("\nDo you want to cancel a booking? (Y/N): ");
+                        String cancelChoice = sc.nextLine().trim().toUpperCase();
+
+                        if (cancelChoice.equals("Y")) {
+                            System.out.print("Enter the customer name to cancel booking: ");
+                            String custName = sc.nextLine().trim();
+
+                            int cancelIndex = names.indexOf(custName);
+
+                            if (cancelIndex >= 0) {
+                                for (int i = 0; i < cars.size(); i++) {
+                                    if (cars.get(i).equals(rentedCars.get(cancelIndex))) {
+                                        available.set(i, true);
+                                    }
+                                }
+
+                                names.remove(cancelIndex);
+                                contacts.remove(cancelIndex);
+                                rentedCars.remove(cancelIndex);
+                                daysArr.remove(cancelIndex);
+                                dates.remove(cancelIndex);
+                                totals.remove(cancelIndex);
+
+                                System.out.println("Booking cancelled for " + custName + "!");
+                            } else {
+                                System.out.println("Customer not found.");
+                            }
+
+                            while (true) {
+                                System.out.println("\n1. Back to Admin Menu");
+                                System.out.println("2. Exit Program");
+                                System.out.print("Choose: ");
+                                if (!sc.hasNextInt()) {
+                                    System.out.println("Invalid input.");
+                                    sc.next();
+                                    continue;
+                                }
+                                int postChoice = sc.nextInt();
+                                sc.nextLine();
+                                if (postChoice == 1) break;
+                                else if (postChoice == 2) {
+                                    System.out.println("Thank you!");
+                                    System.exit(0);
+                                } else {
+                                    System.out.println("Invalid choice.");
+                                }
+                            }
+
+                        } else if (cancelChoice.equals("N")) {
+                            System.out.println("Returning to Admin Menu.");
+                        } else {
+                            System.out.println("Invalid input. Returning to Admin Menu.");
+                        }
+                    }
+
+                    // ================= VIEW AVAILABLE CARS =================
+                    else if (adminChoice == 4) {
+                        System.out.println("\n===== AVAILABLE CARS =====");
+                        for (int i = 0; i < cars.size(); i++) {
+                            String status = available.get(i) ? "Available" : "Not Available";
+                            System.out.println((i + 1) + ". " + cars.get(i) + " - " + status);
+                        }
+
+                        while (true) {
+                            System.out.println("\n1. Back to Admin Menu");
+                            System.out.println("2. Exit Program");
+                            System.out.print("Choose: ");
+                            if (!sc.hasNextInt()) {
+                                System.out.println("Invalid input.");
+                                sc.next();
+                                continue;
+                            }
+                            int postChoice = sc.nextInt();
+                            sc.nextLine();
+                            if (postChoice == 1) break;
+                            else if (postChoice == 2) {
+                                System.out.println("Thank you!");
+                                System.exit(0);
+                            } else {
+                                System.out.println("Invalid choice.");
+                            }
+                        }
+                    }
+
+                    else if (adminChoice == 5) {
+                        adminLoop = false;
+                    } else {
+                        System.out.println("Invalid choice.");
+                    }
+                }
+            }
+
+            // ================= CUSTOMER =================
+            else if (choice == 2) {
+                System.out.println("\nWelcome Customer!");
+
+                String name;
+                while (true) {
+                    System.out.print("Enter your name: ");
+                    name = sc.nextLine().trim();
+                    if (name.isEmpty()) {
+                        System.out.println("Name cannot be empty.");
+                    } else if (!name.matches("[a-zA-Z ]+")) {
+                        System.out.println("Name can only contain letters.");
+                    } else {
+                        break;
+                    }
+                }
+
+                // ✅ CONTACT VALIDATION
+                String contact;
+                while (true) {
+                    System.out.print("Enter contact number: ");
+                    contact = sc.nextLine().trim();
+                    if (contact.isEmpty()) {
+                        System.out.println("Contact cannot be empty.");
+                    } 
+                    else if (!contact.matches("\\d{11}")) {
+                        System.out.println("Contact number must be exactly 11 digits.");
+                    } 
+                    else {
+                        break;
+                    }
+                }
+
+                System.out.println("\nAvailable Cars:");
+                for (int i = 0; i < cars.size(); i++) {
+                    String status = available.get(i) ? "Available" : "Not Available";
+                    System.out.println((i + 1) + ". " + cars.get(i) + " - " + status);
+                }
+
+                System.out.print("Choose car: ");
+                int carChoice = sc.nextInt() - 1;
+                sc.nextLine();
+
+                if (carChoice < 0 || carChoice >= cars.size()) {
+                    System.out.println("Invalid choice.");
+                    continue;
+                }
+
+                // ✅ DAYS VALIDATION
+                int days;
+                while (true) {
+                    System.out.print("Days: ");
+                    String daysInput = sc.nextLine().trim();
+
+                    if (daysInput.isEmpty()) {
+                        System.out.println("Days cannot be empty.");
+                    } else if (!daysInput.matches("\\d+")) {
+                        System.out.println("Days must be a number.");
+                    } else {
+                        days = Integer.parseInt(daysInput);
+                        if (days <= 0) {
+                            System.out.println("Days must be at least 1.");
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
+                String date;
+                while (true) {
+                    System.out.print("Date (yyyy-MM-dd): ");
+                    date = sc.nextLine().trim();
+
+                    try {
+                        LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        break;
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format!");
+                    }
+                }
+
+                if (available.get(carChoice)) {
+
+                    double total = days * price.get(carChoice);
+
+                    System.out.println("\n===== RECEIPT =====");
+                    System.out.println("Name: " + name);
+                    System.out.println("Car: " + cars.get(carChoice));
+                    System.out.printf("Total: %.2f\n", total);
+
+                    names.add(name);
+                    contacts.add(contact);
+                    rentedCars.add(cars.get(carChoice));
+                    daysArr.add(days);
+                    dates.add(date);
+                    totals.add(total);
+
+                    available.set(carChoice, false);
+
+                } else {
+                    System.out.println("\nConflict! Car not available.");
+                }
+
+                while (true) {
+                    System.out.println("\n1. Back to Main Menu");
+                    System.out.println("2. Exit Program");
+                    System.out.print("Choose: ");
+
+                    if (!sc.hasNextInt()) {
+                        System.out.println("Invalid input.");
+                        sc.next();
+                        continue;
+                    }
+
+                    int custChoice = sc.nextInt();
+                    sc.nextLine();
+
+                    if (custChoice == 1) break;
+                    else if (custChoice == 2) {
+                        System.out.println("Thank you!");
+                        System.exit(0);
+                    } else {
+                        System.out.println("Invalid choice.");
+                    }
+                }
+            }
+
+            else {
+                System.out.println("Invalid choice.");
+            }
+        }
+
+        sc.close();
+    }
+}
